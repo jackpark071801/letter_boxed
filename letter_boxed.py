@@ -35,6 +35,37 @@ def filter_words_by_square(words, letter_square, start_letter):
     
     return valid_words
 
+def find_words_for_all_starting_letters(words, letter_square):
+    all_valid_words = {}
+    used_letters_per_word = {}
+    
+    for side in letter_square:
+        for start_letter in side:
+            valid_words = [word for word in words if word[0] == start_letter and is_valid_word(word, letter_square)]
+            if valid_words:
+                all_valid_words[start_letter] = valid_words
+                
+                for word in valid_words:
+                    used_letters_per_word[word] = set(word)
+    
+    return all_valid_words, used_letters_per_word
+
+def suggest_best_starting_words(all_valid_words, used_letters_per_word, letter_square):
+    word_scores = []
+    
+    square_letters = {letter for side in letter_square for letter in side}
+    
+    for start_letter, words in all_valid_words.items():
+        for word in words:
+            letters_used_from_square = used_letters_per_word[word].intersection(square_letters)
+            word_scores.append((word, len(letters_used_from_square)))
+    
+    word_scores.sort(key=lambda x: x[1], reverse=True)
+    
+    best_words = [word for word, score in word_scores if score == word_scores[0][1]]
+    
+    return best_words, word_scores
+
 def main():
     json_file = 'english_words.json'
     
@@ -47,11 +78,11 @@ def main():
         ['M', 'N', 'O', 'P']
     ]
 
-    start_letter = 'A'
+    all_valid_words, used_letters_per_word = find_words_for_all_starting_letters(words, letter_square)
 
-    valid_words = filter_words_by_square(words, letter_square, start_letter)
+    best_words, word_scores = suggest_best_starting_words(all_valid_words, used_letters_per_word, letter_square)
 
-    print(valid_words[:20])
+    print(word_scores)
 
 if __name__ == "__main__":
     main()
