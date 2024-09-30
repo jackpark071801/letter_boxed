@@ -6,7 +6,7 @@ def load_words(json_file):
     return words
 
 def filter_words(words):
-    return [word for word in words if len(word) > 4]
+    return [word.upper() for word in words if len(word) > 4]
 
 def save_filtered_words(filtered_words, output_file):
     with open(output_file, 'w') as file:
