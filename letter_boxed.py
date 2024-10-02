@@ -66,23 +66,60 @@ def suggest_best_starting_words(all_valid_words, used_letters_per_word, letter_s
     
     return best_words, word_scores
 
+def find_next_word(current_word, all_valid_words, used_letters, letter_square):
+    last_letter = current_word[-1]
+    
+    if last_letter in all_valid_words:
+        possible_words = all_valid_words[last_letter]
+    else:
+        return None
+    
+    best_next_word = None
+    max_new_letters = 0
+    
+    for word in possible_words:
+        new_letters = set(word) - used_letters
+        if len(new_letters) > max_new_letters:
+            best_next_word = word
+            max_new_letters = len(new_letters)
+    
+    return best_next_word
+
+def find_solution(letter_square, words):
+    all_valid_words, used_letters_per_word = find_words_for_all_starting_letters(words, letter_square)
+    
+    best_words, _ = suggest_best_starting_words(all_valid_words, used_letters_per_word, letter_square)
+    
+    current_word = best_words[0]
+    used_letters = set(current_word)
+    solution = [current_word]
+    
+    while len(used_letters) < 16:
+        next_word = find_next_word(current_word, all_valid_words, used_letters, letter_square)
+        if not next_word:
+            break
+        
+        solution.append(next_word)
+        used_letters.update(set(next_word))
+        current_word = next_word
+    
+    return solution
+
 def main():
     json_file = 'english_words.json'
     
     words = load_words(json_file)
 
     letter_square = [
-        ['A', 'B', 'C', 'D'],
-        ['E', 'F', 'G', 'H'],
-        ['I', 'J', 'K', 'L'],
-        ['M', 'N', 'O', 'P']
+        ['N', 'E', 'P'],
+        ['A', 'H', 'G'],
+        ['R', 'I', 'K'],
+        ['C', 'O', 'L']
     ]
 
-    all_valid_words, used_letters_per_word = find_words_for_all_starting_letters(words, letter_square)
+    solution = find_solution(letter_square, words)
 
-    best_words, word_scores = suggest_best_starting_words(all_valid_words, used_letters_per_word, letter_square)
-
-    print(word_scores)
+    print(solution)
 
 if __name__ == "__main__":
     main()
