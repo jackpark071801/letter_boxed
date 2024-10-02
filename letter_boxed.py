@@ -1,20 +1,31 @@
 import json
 
-def load_words(json_file):
+def load_words(
+    json_file: str,
+    ) -> List[str]:
     with open(json_file, 'r') as file:
         words = json.load(file)
     return words
 
-def is_on_side(letter, side):
+def is_on_side(
+    letter: str,
+    side: int,
+    ) -> bool:
     return letter in side
 
-def find_side(letter, letter_square):
+def find_side(
+    letter: str,
+    letter_square: List[List[str]],
+    ) -> Optional[bool]:
     for i, side in enumerate(letter_square):
         if is_on_side(letter, side):
             return i
     return None
 
-def is_valid_word(word, letter_square):
+def is_valid_word(
+    word: str,
+    letter_square: List[List[str]],
+    ) -> bool:
     prev_side = find_side(word[0], letter_square)
     
     if prev_side is None:
@@ -28,14 +39,21 @@ def is_valid_word(word, letter_square):
     
     return True
 
-def filter_words_by_square(words, letter_square, start_letter):
+def filter_words_by_square(
+    words: List[str],
+    letter_square: List[List[str]],
+    start_letter: str,
+    ) -> List[str]:
     valid_words = [word for word in words if word[0] == start_letter]
     
     valid_words = [word for word in valid_words if is_valid_word(word, letter_square)]
     
     return valid_words
 
-def find_words_for_all_starting_letters(words, letter_square):
+def find_words_for_all_starting_letters(
+    words: List[str],
+    letter_square: List[List[str]],
+    ) -> List[str], List[int]:
     all_valid_words = {}
     used_letters_per_word = {}
     
@@ -50,7 +68,11 @@ def find_words_for_all_starting_letters(words, letter_square):
     
     return all_valid_words, used_letters_per_word
 
-def suggest_best_starting_words(all_valid_words, used_letters_per_word, letter_square):
+def suggest_best_starting_words(
+    all_valid_words: List[str],
+    used_letters_per_word: Dict[str, int],
+    letter_square: List[List[str]],
+    ) -> List[str], Dict[str, int]:
     word_scores = []
     
     square_letters = {letter for side in letter_square for letter in side}
@@ -66,7 +88,12 @@ def suggest_best_starting_words(all_valid_words, used_letters_per_word, letter_s
     
     return best_words, word_scores
 
-def find_next_word(current_word, all_valid_words, used_letters, letter_square):
+def find_next_word(
+    current_word: str,
+    all_valid_words: List[str],
+    used_letters: List[str],
+    letter_square: List[List[str]],
+    ) -> Optional[str]:
     last_letter = current_word[-1]
     
     if last_letter in all_valid_words:
@@ -85,7 +112,10 @@ def find_next_word(current_word, all_valid_words, used_letters, letter_square):
     
     return best_next_word
 
-def find_solution(letter_square, words):
+def find_solution(
+    letter_square: List[List[str]],
+    words: List[str],
+    ) -> List[str]:
     all_valid_words, used_letters_per_word = find_words_for_all_starting_letters(words, letter_square)
     
     best_words, _ = suggest_best_starting_words(all_valid_words, used_letters_per_word, letter_square)
