@@ -1,4 +1,5 @@
 import json
+from typing import List, Dict, Tuple, Optional
 
 def load_words(
     json_file: str,
@@ -53,7 +54,7 @@ def filter_words_by_square(
 def find_words_for_all_starting_letters(
     words: List[str],
     letter_square: List[List[str]],
-    ) -> List[str], List[int]:
+    ) -> Tuple[List[str], List[int]]:
     all_valid_words = {}
     used_letters_per_word = {}
     
@@ -72,7 +73,7 @@ def suggest_best_starting_words(
     all_valid_words: List[str],
     used_letters_per_word: Dict[str, int],
     letter_square: List[List[str]],
-    ) -> List[str], Dict[str, int]:
+    ) -> Tuple[List[str], Dict[str, int]]:
     word_scores = []
     
     square_letters = {letter for side in letter_square for letter in side}
