@@ -136,16 +136,43 @@ def find_solution(
     
     return solution
 
+def remove_word_from_json(
+    word_to_remove: str,
+    json_file_path: str,
+    ) -> None:
+    try:
+        with open(json_file_path, 'r') as f:
+            word_list = json.load(f)
+        
+        if word_to_remove.upper() in word_list:
+            word_list.remove(word_to_remove.upper())
+            print(f"Word '{word_to_remove}' removed from the list.")
+        else:
+            print(f"Word '{word_to_remove}' not found in the list.")
+        
+        with open(json_file_path, 'w') as f:
+            json.dump(word_list, f)
+            print(f"Updated word list saved to '{json_file_path}'.")
+    
+    except FileNotFoundError:
+        print(f"Error: The file '{json_file_path}' was not found.")
+    except json.JSONDecodeError:
+        print(f"Error: Failed to decode JSON from the file '{json_file_path}'.")
+    except Exception as e:
+        print(f"An error occurred: {e}")
+
 def main():
     json_file = 'english_words.json'
+
+    #remove_word_from_json('DANORANJA', json_file)
     
     words = load_words(json_file)
 
     letter_square = [
-        ['N', 'E', 'P'],
-        ['A', 'H', 'G'],
-        ['R', 'I', 'K'],
-        ['C', 'O', 'L']
+        ['H', 'D', 'P'],
+        ['F', 'A', 'O'],
+        ['N', 'S', 'C'],
+        ['R', 'I', 'J']
     ]
 
     solution = find_solution(letter_square, words)
