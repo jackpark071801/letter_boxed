@@ -66,7 +66,7 @@ def find_words_for_all_starting_letters(
                 
                 for word in valid_words:
                     used_letters_per_word[word] = set(word)
-    
+
     return all_valid_words, used_letters_per_word
 
 def suggest_best_starting_words(
@@ -84,8 +84,8 @@ def suggest_best_starting_words(
             word_scores.append((word, len(letters_used_from_square)))
     
     word_scores.sort(key=lambda x: x[1], reverse=True)
-    
-    best_words = [word for word, score in word_scores if score == word_scores[0][1]]
+
+    best_words = [word for word, score in word_scores]
     
     return best_words, word_scores
 
@@ -121,14 +121,19 @@ def find_solution(
     
     best_words, _ = suggest_best_starting_words(all_valid_words, used_letters_per_word, letter_square)
     
-    current_word = best_words[0]
+    i=0
+    current_word = best_words[i]
     used_letters = set(current_word)
     solution = [current_word]
     
-    while len(used_letters) < 16:
+    while len(used_letters) < 12:
         next_word = find_next_word(current_word, all_valid_words, used_letters, letter_square)
         if not next_word:
-            break
+            i += 1
+            current_word = best_words[i]
+            used_letters = set(current_word)
+            solution = [current_word]
+            next_word = find_next_word(current_word, all_valid_words, used_letters, letter_square)
         
         solution.append(next_word)
         used_letters.update(set(next_word))
@@ -164,15 +169,17 @@ def remove_word_from_json(
 def main():
     json_file = 'english_words.json'
 
-    #remove_word_from_json('DANORANJA', json_file)
+    #remove_word_from_json('TYPONYM', json_file)
+    #remove_word_from_json('NANMU', json_file)
+    #remove_word_from_json('UMPQUA', json_file)
     
     words = load_words(json_file)
 
     letter_square = [
-        ['H', 'D', 'P'],
-        ['F', 'A', 'O'],
-        ['N', 'S', 'C'],
-        ['R', 'I', 'J']
+        ['C', 'Y', 'D'],
+        ['A', 'M', 'O'],
+        ['Q', 'N', 'E'],
+        ['T', 'P', 'U']
     ]
 
     solution = find_solution(letter_square, words)
